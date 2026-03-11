@@ -1,5 +1,6 @@
 # Virtual environment
 venv/
+.venv/
 .env/
 
 # Python cache
@@ -7,6 +8,14 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # VSCode
 .vscode/
