@@ -1,60 +1,79 @@
 # Lab1 FastAPI Book App
 
-This project is a small FastAPI web application for viewing and adding books through server-rendered HTML pages. The main page shows a list of books, and the `/add` page provides a form for creating a new book entry.
+This project is a small FastAPI application for viewing and adding books through server-rendered HTML pages. It uses Jinja2 templates for the UI and keeps data in a temporary in-memory store, which makes it suitable for study, demos, and small framework exercises.
 
-The app uses Jinja2 templates for the UI and keeps data in a temporary in-memory list. It is intended as a simple example of FastAPI routes, dependency separation, form handling, and a clean project layout.
-
-## Project Overview
-
-### Features
+## Features
 
 - View a list of books on the home page
 - Open a form page to add a new book
 - Submit book data with standard HTML form-data
-- Redirect back to the home page after adding a book
+- Validate submitted data on the server before creating a book
+- Redisplay the form with inline validation errors when input is invalid
+- Redirect back to the home page after a successful submission
 
-### Project Structure
+## Validation Rules
+
+Book creation is validated with Pydantic before data is stored:
+
+- `title` is required, trimmed, and limited to 200 characters
+- `author` is required, trimmed, and limited to 120 characters
+- `year` must be a positive integer
+- `year` must not be greater than the current year plus one
+
+## Project Structure
 
 ```text
 .
-├── app/
-│   ├── db.py
-│   ├── dependencies.py
-│   ├── main.py
-│   ├── models.py
-│   ├── schemas.py
-│   └── __init__.py
-├── templates/
-│   ├── add_book.html
-│   └── index.html
-├── pyproject.toml
-└── uv.lock
+|-- app/
+|   |-- routes/
+|   |   |-- __init__.py
+|   |   `-- books.py
+|   |-- __init__.py
+|   |-- db.py
+|   |-- dependencies.py
+|   |-- main.py
+|   |-- models.py
+|   |-- schemas.py
+|   `-- templates.py
+|-- templates/
+|   |-- add_book.html
+|   `-- index.html
+|-- README.md
+|-- pyproject.toml
+`-- uv.lock
 ```
 
-### Main Entry Point
+## Module Responsibilities
 
-The FastAPI application instance is defined in:
+- `app/main.py`: application entry point and router registration
+- `app/routes/books.py`: route handlers for the book pages and form workflow
+- `app/models.py`: shared validated book models and field constraints
+- `app/schemas.py`: request-oriented schema for creating books
+- `app/db.py`: temporary in-memory storage abstraction
+- `app/dependencies.py`: dependency injection helpers
+- `app/templates.py`: Jinja2 template configuration
+- `templates/`: HTML templates rendered by the app
 
-```text
-app.main:app
-```
+## Routes
+
+- `GET /`: render the list of books
+- `GET /add`: render the add-book form
+- `POST /add`: validate form input, create a book, and redirect to `/`
 
 ## Requirements
 
 - Python 3.12 or newer
 - `uv`
 
-The project dependencies are defined in `pyproject.toml` and locked in `uv.lock`.
+Project metadata and dependencies are defined in `pyproject.toml` and locked in `uv.lock`.
 
 ## Installation
 
-Clone the project and install dependencies with `uv`:
+Install the project dependencies with `uv`:
 
 ```bash
 uv sync
 ```
-
-This command creates the environment and installs the dependencies declared in `pyproject.toml`.
 
 ## Running the Project
 
@@ -64,11 +83,7 @@ Run the FastAPI app with Uvicorn through `uv`:
 uv run uvicorn app.main:app
 ```
 
-The application will be available at:
-
-```text
-http://127.0.0.1:8000
-```
+The application will be available at `http://127.0.0.1:8000`.
 
 ### Development Run
 
@@ -80,8 +95,6 @@ uv run uvicorn app.main:app --reload
 
 ## Notes
 
-- Dependencies are managed through `pyproject.toml` and `uv`.
-- The book list is stored in memory in `app/db.py`.
-- Data is not persistent and will reset when the app restarts.
-- The HTML templates are located in the `templates/` directory.
-- The main routes are `/` for the book list and `/add` for the add-book form.
+- Data is stored only in memory and will reset when the app restarts.
+- The project keeps the UI server-rendered and does not use a frontend framework.
+- Validation errors are shown on the form page instead of returning the default JSON error response for invalid form submissions.
