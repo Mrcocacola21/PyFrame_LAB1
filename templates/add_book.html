@@ -2,6 +2,8 @@
 <html>
 
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Додати книгу</title>
 
@@ -15,26 +17,47 @@
 
 <h2 class="mb-4">Додати нову книгу</h2>
 
+{% if errors %}
+<div class="alert alert-danger" role="alert">
+Будь ласка, виправте помилки у формі.
+</div>
+{% endif %}
+
 <form method="post">
 
 <div class="mb-3">
 
 <label class="form-label">Назва книги</label>
-<input type="text" name="title" class="form-control" required>
+<input type="text" name="title" class="form-control{% if errors.title %} is-invalid{% endif %}" value="{{ form_data.title }}" maxlength="{{ max_title_length }}" required>
+{% if errors.title %}
+<div class="invalid-feedback">
+{{ errors.title }}
+</div>
+{% endif %}
 
 </div>
 
 <div class="mb-3">
 
 <label class="form-label">Автор</label>
-<input type="text" name="author" class="form-control" required>
+<input type="text" name="author" class="form-control{% if errors.author %} is-invalid{% endif %}" value="{{ form_data.author }}" maxlength="{{ max_author_length }}" required>
+{% if errors.author %}
+<div class="invalid-feedback">
+{{ errors.author }}
+</div>
+{% endif %}
 
 </div>
 
 <div class="mb-3">
 
 <label class="form-label">Рік</label>
-<input type="number" name="year" class="form-control" required>
+<input type="number" name="year" class="form-control{% if errors.year %} is-invalid{% endif %}" value="{{ form_data.year }}" min="1" max="{{ max_book_year }}" required>
+{% if errors.year %}
+<div class="invalid-feedback">
+{{ errors.year }}
+</div>
+{% endif %}
 
 </div>
 

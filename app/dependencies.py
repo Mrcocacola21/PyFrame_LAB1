@@ -1,11 +1,12 @@
-from typing import List
+from typing import Annotated
 
-from .models import Book
+from fastapi import Depends
 
-books_db: List[Book] = [
-    Book(title="1984", author="George Orwell", year=1949),
-    Book(title="The Hobbit", author="J.R.R. Tolkien", year=1937)
-]
+from .db import InMemoryBookStore, book_store
 
-def get_books():
-    return books_db
+
+def get_book_store() -> InMemoryBookStore:
+    return book_store
+
+
+BookStoreDep = Annotated[InMemoryBookStore, Depends(get_book_store)]
